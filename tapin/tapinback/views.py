@@ -6,6 +6,8 @@ from .models import Client, TapUser
 import json
 import random
 import secrets
+import uuid
+import base64
 
 def status(request):
     if request.method == 'GET':
@@ -34,10 +36,25 @@ def pinauth(request):
     if request.method == 'POST':
         if request.session.get_expiry_age() <= 0:
             return HttpResponse(status=408)
-        params = request.content_params
-        if request.session['temptoken'] != params['session_token']:
+        session_token = request.POST.get('session_token', None)
+        if session_token is None:
+            return HttpResponse(status=400)
+        if request.session['session_token'] != session_token:
             return HttpResponse(status=401)
-        user = TapUser.objects.get(id = params['user'])
+        uid = request.POST.get('uid', None)
+        if uid is None:
+            return HttpResponse(status=400)
+        user = TapUser.objects.get(id = uuid.UUID(uid))
+        pin = request.POST.get('pin', None)
+        if pin is None:
+            return HttpResponse(status=400)
+        if user.pin != pin:
+            return HttpResponse(status=401)
+        hostname = request.POST.get('hostname', None)
+        if hostname is None:
+            return HttpResponse(status=400)
+        client = Client.objects.get(hostname=hostname)
+        client.status = "nothing"
 
 def tapd(request):
     if request.method == 'GET':
@@ -50,13 +67,37 @@ def tapd(request):
             return HttpResponse(status=400)
         if client.token != token:
             return HttpResponse(status=401)
-        token_segments = [client.token[(i-1)*48:i*48] for i in range(1, 15)]
-        token_keys = [client.keys[(i-1)*6:i*6] for i in range(1, 15)]
+        uid = response.GET.get('uid', None)
+        if uid is None:
+            return HttpResponse(status=400)
+        user = TapUser.objects.get(id=uid)
+        client.status = "in progress"
+        client.username = user.userid.username
+        client.uid = uid
+        token_bytes = base64.urlsafe_b64decode(client.token + ("=" * (-len(client.token)%4)))
+        key_bytes = base64.urlsafe_b64decode(client.keys + ("=" * (-len(client.keys)%4)))
+        token_segments = [token_bytes[(i-1)*48:i*48] for i in range(1, 15)]
+        token_keys = [key_bytes[(i-1)*6:i*6] for i in range(1, 15)]
         segments = [{'key':token_keys[i], 'contents':token_segments[i]} for i in range(14)]
         res = {'segments':segments}
         return HttpResponder(json.dumps(res), content_type='application/json')    
     elif request.method == 'POST':
-        return HttpResponse(status=200)
+        hostname = request.POST.get('hostname', None)
+        if hostname is None:
+            return HttpResponse(status=400)
+        client = Client.objects.get(hostname=hostname)
+        token = request.POST.get('token', None)
+        if token is None:
+            return HttpResponse(status=400)
+        if client.token != token:
+            return HttpResponse(status=401)
+        success = request.POST.get('success', None)
+        if success is None:
+            return HttpResponse(status=400)
+        if success:
+            client.status = "success"
+        else:
+            client.status = "failure"
     return HttpResponse(status=400)
 
 #from .forms import AuthForm
