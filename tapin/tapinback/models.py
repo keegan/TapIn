@@ -23,5 +23,6 @@ class TapUser(models.Model):
 class Client(models.Model):
     token = models.CharField(default=gen_client_token, max_length=96)
     hostname = models.CharField(unique=True, max_length=30)
+    uid = models.UUIDField(default=uuid.uuid4)
     status = models.CharField(default="nothing", max_length=20)
     username = models.CharField(default="", max_length=20)
