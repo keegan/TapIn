@@ -62,6 +62,19 @@ form {
     height: 100%;
 }
 
+#login-popup {
+    position: absolute;
+    top: 15vh;
+    left: 25vw;
+    overflow-y: hidden;
+    width: 50vw;
+    padding: 5vh;
+    color: #000;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #efefef;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
 footer {
     position: relative;
     width: 100vw;
@@ -80,9 +93,12 @@ footer {
 #wrapper {
     position: relative;
     width: 100vw;
-    height: calc(100vh - 48px);
+    height: 100vh;
     z-index: 1;
     background-color: #fff;
+    background-image: url('/static/img/bg.jpg');
+    background-position: center center;
+    background-size: cover;
 }
 
 /*#wrapper:before {
@@ -118,12 +134,11 @@ section {
     display: inline-block;
 }
 
-#desc > span {
-    width: calc(100% - 5em);
+span {
     font-size: 1.2em;
     display: inline-block;
-    margin: 0 0 1em 0;
-    clear: both;
+    height: 1.2em;
+    width: 100px;
 }
 
 /*@media (max-height: 300px) {
@@ -144,11 +159,16 @@ section {
 }*/
 
 
-#resume a {
+/*#resume a {
     text-decoration: none;
     color: #000;
     font-size: 1em;
     z-index: 10;
+}*/
+
+#login {
+    visibility: hidden;
+    opacity: 0;
 }
 
 .login-button {
