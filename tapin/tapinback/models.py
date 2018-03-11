@@ -11,7 +11,7 @@ def gen_keys():
     return secrets.token_urlsafe(84)
 
 def gen_client_token():
-    return None
+    return secrets.token_urlsafe(64)
 
 class TapUser(models.Model):
     token = models.CharField(default=gen_token, max_length=672)
@@ -21,11 +21,7 @@ class TapUser(models.Model):
     userid = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class Client(models.Model):
-    token = models.CharField(max_length=64)
+    token = models.CharField(default=gen_client_token, max_length=64)
     hostname = models.CharField(max_length=30)
     status = models.CharField(default="nothing", max_length=20)
     username = models.CharField(default="", max_length=20)
-    def __init__(self, hostname, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.hostname = hostname
-        self.token = secrets.token_urlsafe(64)
