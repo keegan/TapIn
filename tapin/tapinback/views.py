@@ -25,7 +25,7 @@ def status(request):
         res['status'] = "success"
         res['username'] = client.username
         res['session_token'] = str(request.session['session_token'])
-        res['uid']= client.uid
+        res['uid']= str(client.uid)
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         return HttpResponse(status=400)
