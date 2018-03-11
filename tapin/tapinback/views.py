@@ -19,13 +19,12 @@ def status(request):
         token = request.GET.get('token', None)
         if token is None:
             return HttpResponse(status=400)
-        print(token)
-        print(client.token)
         if client.token != token:
             return HttpResponse(status=401)
         res['status'] = client.status 
         res['username'] = client.username
-        res['token'] = str(request.session['temptoken'])
+        res['token'] = str(request.session['session_token'])
+        res['uid']= client.uid
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         return HttpResponse(status=400)
@@ -35,7 +34,7 @@ def pinauth(request):
         if request.session.get_expiry_age() <= 0:
             return HttpResponse(status=408)
         params = request.content_params
-        if request.session['temptoken'] != params['temptoken']:
+        if request.session['temptoken'] != params['session_token']:
             return HttpResponse(status=401)
         user = TapUser.objects.get(id = params['user'])
 
@@ -45,7 +44,16 @@ def tapd(request):
         if hostname is None:
             return HttpResponse(status=400)
         client = Client.objects.get(hostname=hostname)
-        
+        token = request.GET.get('token', None)
+        if token is None:
+            return HttpResponse(status=400)
+        if client.token != token:
+            return HttpResponse(status=401)
+        token_segments = [client.token[(i-1)*48:i*48] for i in range(1, 15)]
+        token_keys = [client.keys[(i-1)*6:i*6] for i in range(1, 15)]
+        segments = [{'key':token_keys[i], 'contents':token_segments[i]} for i in range(14)]
+        res = {'segments':segments}
+        return HttpResponder(json.dumps(res), content_type='application/json')    
     elif request.method == 'POST':
         return HttpResponse(status=200)
     return HttpResponse(status=400)
