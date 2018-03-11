@@ -41,6 +41,7 @@ function pollBackend(output) {
                 }
             } else if (output.status === "failure") {
                 console.error("Card failed.");
+                setTimeout(pollBackend(output), 1000);
             } else {
                 setTimeout(pollBackend(output), 1000);
             }
