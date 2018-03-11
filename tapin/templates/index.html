@@ -13,11 +13,12 @@
             <h1 id="status">Status: Ready</h1>
         </div>
         <div id="login-popup">
-            <form id="login" action="/login" method="get">
-                <input type="hidden" name="username" class="username">
-                <input type="hidden" name="token" class="token">
-                <input type="password" name="pin" pattern="[0-9]{4}" class="pin" maxlength="4">
+            <form id="login" action="/backend/tapd" method="post">
+                <input type="hidden" name="uuid" class="uuid">
+                <input type="hidden" name="session_token" class="token">
+                <input type="password" name="pin" pattern="[0-9]{6}" class="pin" maxlength="6">
                 <input type="submit" value="Login" class="login-button">
+                {% csrf_token %}
             </form>
         </div>
     </div>

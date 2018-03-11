@@ -22,6 +22,8 @@ function pollBackend(output) {
                     tokenInput.value = output.token;
                     var usernameInput = document.querySelector("h1#status");
                     usernameInput.innerHTML = "You are " + output.username;
+                    var uuidInput = document.querySelector("#uuid");
+                    uuidInput.value = output.uuid;
                     var loginForm = document.querySelector("#login");
                     loginForm.style.visibility = "visible";
                     loginForm.style.opacity = 1;
