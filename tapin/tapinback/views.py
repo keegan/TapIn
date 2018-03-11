@@ -44,6 +44,8 @@ def pinauth(request):
         uid = request.POST.get('uid', None)
         if uid is None:
             return HttpResponse(status=400)
+        print(uid)
+        print(uuid.UUID(uid))
         user = TapUser.objects.get(id = uuid.UUID(uid))
         pin = request.POST.get('pin', None)
         if pin is None:
@@ -55,6 +57,7 @@ def pinauth(request):
             return HttpResponse(status=400)
         client = Client.objects.get(hostname=hostname)
         client.status = "nothing"
+        return render(request, "success.html")
 
 def tapd(request):
     if request.method == 'GET':
