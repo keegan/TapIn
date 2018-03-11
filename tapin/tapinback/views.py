@@ -8,7 +8,7 @@ import secrets
 def status(request):
     if request.method == 'GET':
         request.session.set_expiry(30)
-        request.session['temptoken'] = str(secrets.token_urlsafe(128))
+        request.session['temptoken'] = str(secrets.token_urlsafe(64))
         res = {}
         res['status'] = 'in progress' if random.random() < 0.8 else 'success'
         res['username'] = '2018wzhang'
@@ -19,8 +19,12 @@ def status(request):
 
 def pinauth(request):
     if request.method == 'POST':
+        if request.session.get_expiry_age() <= 0:
+            return HttpResponse(status=408)
         params = request.content_params
-        user = params['user']
+        if request.session['temptoken'] != params['temptoken']:
+            return HttpResponse(status=401)
+        user = TapUser.objects.get(id = params['user'])
 
 #from .forms import AuthForm
 # Create your views here.
