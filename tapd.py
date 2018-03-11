@@ -229,18 +229,15 @@ def poll():
         cardmonitor.deleteObserver(cardobserver)
     return delete
 
-def general_failure():
-    pass
-
 def handle_card(connection):
     if toHexString(connection.getATR()) != MIFARE_CLASSIC_1K_ATR:
-        general_failure()
+        requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'unknown', 'extra': {} })
         return
     # Read UUID sector.
     try:
         sector = read_sector(connection, 1, [0xFF] * 6)
     except NFCError:
-        general_failure()
+        requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'unknown', 'extra': {} })
         return
     # convert the sectors to ascii, and then concatenate to a UUID string.
     # The string representaion of a UUID is 36 bytes.
@@ -248,7 +245,7 @@ def handle_card(connection):
     as_str = "".join([chr(x) for x in sector])
     uuid = as_str[:36]
     # Get card information from server
-    response = requests.get("https://localhost:8000/backend/tapd", data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'uuid': uuid})
+    response = requests.get(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'uuid': uuid})
     sectors = []
     # verify sectors one at a time
     for i,sector in enumerate(sectors):
@@ -266,12 +263,15 @@ def handle_card(connection):
         try:
             contents = read_sector(connection, i+2, key)
         except NFCError as e:
+            requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'auth', 'extra': {'failed_sector': i} })
             # logic for sending error
             return
         print(f"expected: {fragment}, actual: {contents}")
         if contents != fragment:
             # Send error
+            requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'auth', 'extra': {'failed_sector': i} })
             return
+    requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': True, 'error_code': 'unknown', 'extra': {}})
 
 def main():
     monitor = CardMonitor()
