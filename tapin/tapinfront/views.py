@@ -1,11 +1,13 @@
 from django.shortcuts import render
 
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
-
+@csrf_protect
 def index(request):
-    return render(request, 'index.html')
+    csrf_token = {}
+    return render(request, 'index.html', csrf_token)
 
 def login(request):
     if request.method == "GET":
