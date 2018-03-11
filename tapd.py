@@ -251,7 +251,7 @@ def handle_card(connection):
         requests.post(API_LOC,
                       data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'unknown',
                             'extra': {}})
-        print("Errored!")
+        print("Errored! @ card type")
         return
     # Read UUID sector.
     try:
@@ -260,7 +260,7 @@ def handle_card(connection):
         requests.post(API_LOC,
                       data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'unknown',
                             'extra': {}})
-        print("Errored!")
+        print("Errored! @ sector read")
         return
     # convert the sectors to ascii, and then concatenate to a UUID string.
     # The string representaion of a UUID is 36 bytes.

@@ -103,7 +103,7 @@ def tapd(request):
         success = request.POST.get('success', None)
         if success is None:
             return HttpResponse(status=400)
-        if success:
+        if success == "True":
             client.status = "success"
         else:
             client.status = "failure"
