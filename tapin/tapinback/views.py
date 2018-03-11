@@ -26,6 +26,9 @@ def status(request):
         if client.token != token:
             return HttpResponse(status=401)
         res['status'] = client.status
+        if client.status == "failure":
+            client.status = "nothing"
+            client.save()
         res['username'] = client.username
         res['session_token'] = str(request.session['session_token'])
         res['uid'] = str(client.uid)
@@ -50,14 +53,16 @@ def pinauth(request):
         print(uuid.UUID(uid))
         user = TapUser.objects.get(id=uuid.UUID(uid))
         pin = request.POST.get('pin', None)
-        if pin is None:
-            return HttpResponse(status=400)
-        if user.pin != pin:
-            return render(request, 'failure.html')
         hostname = request.POST.get('hostname', None)
         if hostname is None:
             return HttpResponse(status=400)
         client = Client.objects.get(hostname=hostname)
+        if pin is None:
+            return HttpResponse(status=400)
+        if user.pin != pin:
+            client.status = "failure"
+            client.save()
+            return render(request, 'failure.html')
         client.status = "nothing"
         client.save()
         return render(request, "success.html")
