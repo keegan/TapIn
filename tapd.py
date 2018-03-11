@@ -1,6 +1,7 @@
 from smartcard.CardMonitoring import CardMonitor, CardObserver
 from smartcard.util import toHexString
 from typing import List
+import traceback
 import requests
 import base64
 import time
@@ -25,7 +26,10 @@ class TapObserver(CardObserver):
         for card in addedcards:
             card.connection = card.createConnection()
             card.connection.connect()
-            self.callback(card.connection)
+            try:
+                self.callback(card.connection)
+            except Exception as e:
+                traceback.print_exc()
         for card in removedcards:
             print("Card disconnected")
 
@@ -244,8 +248,12 @@ def handle_card(connection):
     sector = sum(sector, []) # flatten
     as_str = "".join([chr(x) for x in sector])
     uuid = as_str[:36]
-    # Get card information from server
-    response = requests.get(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'uuid': uuid})
+    # Start a session with the server, so we can get CSRF tokens
+    session = requests.session()
+    # Get card information from server, also setting CSRF token in the process
+    response = session.get(API_LOC + f"?token={TAPD_TOKEN}&hostname={TAPD_HOSTNAME}&uuid={uuid}", data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'uuid': uuid})
+    print(session.cookies)
+    csrftoken = session.cookies['csrftoken']
     sectors = []
     # verify sectors one at a time
     for i,sector in enumerate(sectors):
@@ -263,15 +271,15 @@ def handle_card(connection):
         try:
             contents = read_sector(connection, i+2, key)
         except NFCError as e:
-            requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'auth', 'extra': {'failed_sector': i} })
+            requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'auth', 'extra': {'failed_sector': i}, 'csrfmiddlewaretoken': csrftoken})
             # logic for sending error
             return
         print(f"expected: {fragment}, actual: {contents}")
         if contents != fragment:
             # Send error
-            requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'auth', 'extra': {'failed_sector': i} })
+            requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': False, 'error_code': 'auth', 'extra': {'failed_sector': i}, 'csrfmiddlewaretoken': csrftoken})
             return
-    requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': True, 'error_code': 'unknown', 'extra': {}})
+    requests.post(API_LOC, data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'success': True, 'error_code': 'unknown', 'extra': {}, 'csrfmiddlewaretoken': csrftoken})
 
 def main():
     monitor = CardMonitor()
