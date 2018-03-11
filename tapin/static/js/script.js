@@ -11,10 +11,10 @@ function pollBackend(output) {
             if("token" in output && "username" in output) {
                 console.log(output.token);
                 console.log("ready");
-                var token_input = document.querySelector("#login > .token");
-                token_input.value = output.token;
-                var username_input = document.querySelector("#login > .username");
-                username_input.value = output.username;
+                var tokenInput = document.querySelector("#login > .token");
+                tokenInput.value = output.token;
+                var usernameInput = document.querySelector("#login > .username");
+                usernameInput.value = output.username;
             }
         }
     };
@@ -28,5 +28,5 @@ function pollBackend(output) {
 
 window.onload = function() {
     var output = { "status": "", "username": ""};
-    setInterval( function() { pollBackend(output); }, 500 );
+    var pollingInterval = setInterval( function() { setTimeout(function() {pollBackend(output);}, 500);}, 500);
 }
