@@ -21,7 +21,8 @@ def status(request):
             return HttpResponse(status=400)
         if client.token != token:
             return HttpResponse(status=401)
-        res['status'] = client.status 
+        #res['status'] = client.status 
+        res['status'] = "success"
         res['username'] = client.username
         res['token'] = str(request.session['session_token'])
         res['uid']= client.uid

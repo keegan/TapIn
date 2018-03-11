@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from smartcard.CardMonitoring import CardMonitor, CardObserver
 from smartcard.util import toHexString
 from typing import List
@@ -252,9 +253,9 @@ def handle_card(connection):
     session = requests.session()
     # Get card information from server, also setting CSRF token in the process
     response = session.get(API_LOC + f"?token={TAPD_TOKEN}&hostname={TAPD_HOSTNAME}&uuid={uuid}", data={'token': TAPD_TOKEN, 'hostname': TAPD_HOSTNAME, 'uuid': uuid})
+    sectors = response.json
     print(session.cookies)
     csrftoken = session.cookies['csrftoken']
-    sectors = []
     # verify sectors one at a time
     for i,sector in enumerate(sectors):
         # The backend returns URL SAFE base64, so decode it into bytes and then make it an array
