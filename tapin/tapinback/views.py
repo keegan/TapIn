@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 
+from .models import Client, TapUser
+
 import json
 import random
 import secrets
@@ -10,8 +12,10 @@ def status(request):
         request.session.set_expiry(30)
         request.session['temptoken'] = str(secrets.token_urlsafe(64))
         res = {}
-        res['status'] = 'in progress' if random.random() < 0.8 else 'success'
-        res['username'] = '2018wzhang'
+        params = request.content_params
+        client = Client.objects.get(hostname=params['hostname'])
+        res['status'] = client.status 
+        res['username'] = client.username
         res['token'] = str(request.session['temptoken'])
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
@@ -25,6 +29,9 @@ def pinauth(request):
         if request.session['temptoken'] != params['temptoken']:
             return HttpResponse(status=401)
         user = TapUser.objects.get(id = params['user'])
+
+def tapd(request):
+    return HttpResponse(status=500)
 
 #from .forms import AuthForm
 # Create your views here.
