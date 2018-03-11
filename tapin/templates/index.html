@@ -10,6 +10,9 @@
     {% include 'header.html' %}
     <div id="wrapper">
         <form id="login" action="/login" method="get">
+            <input type="text" name="username" class="username">
+            <input type="number" name="pin" class="pin">
+            <input type="hidden" name="token" class="token">
             <input type="submit" value="Login" class="login-button">
         </form>
     </div>
