@@ -17,10 +17,10 @@ def status(request):
     else:
         return HttpResponse(status=400)
 
-#def pinauth(request):
-    #if request.method == 'POST':
-    #    params = request.content_params
-    #    user = params['user']
+def pinauth(request):
+    if request.method == 'POST':
+        params = request.content_params
+        user = params['user']
 
 #from .forms import AuthForm
 # Create your views here.

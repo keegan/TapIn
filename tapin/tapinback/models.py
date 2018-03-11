@@ -6,7 +6,7 @@ import uuid
 import token
 
 class TapUser(models.Model):
-    token = models.BinaryField(default=token.gen_token())
+    token = models.BinaryField(default=token.gen_token)
     pin = models.CharField(max_length=6)
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     userid = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
