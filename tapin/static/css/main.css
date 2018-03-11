@@ -73,7 +73,8 @@ form {
 input.pin {
     height: 200px;
     font-size: 2em;
-    width: 600px;
+    background-color: transparent;
+    width: 100%;
     outline: none;
     border: none;
     text-align: center;
@@ -82,7 +83,7 @@ input.pin {
 #login-popup {
     position: absolute;
     top: 9em;
-    overflow-y: hidden;
+    overflow: hidden;
     left: calc(25vw - 3em);
     width: 50vw;
     padding: 3em;

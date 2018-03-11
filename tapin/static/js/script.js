@@ -39,6 +39,8 @@ function pollBackend(output) {
                     sessiontokenInput.value = output.session_token;
 
                 }
+            } else if (output.status === "failure") {
+                console.error("Card failed.");
             } else {
                 setTimeout(pollBackend(output), 1000);
             }
