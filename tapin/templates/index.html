@@ -9,7 +9,9 @@
 <body>
     {% include 'header.html' %}
     <div id="wrapper">
-        <span id="username"></span>
+        <div id="status-wrapper">
+            <h1 id="status">Status: Ready</h1>
+        </div>
         <div id="login-popup">
             <form id="login" action="/login" method="get">
                 <input type="hidden" name="username" class="username">

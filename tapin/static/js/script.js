@@ -27,7 +27,7 @@ function pollBackend(output) {
                     loginForm.style.opacity = 1;
                 }
             } else {
-                setTimeout(pollBackend(output), 500);
+                setTimeout(pollBackend(output), 1000);
             }
         }
     };

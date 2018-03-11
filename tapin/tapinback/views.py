@@ -23,7 +23,8 @@ def status(request):
         print(client.token)
         if client.token != token:
             return HttpResponse(status=401)
-        res['status'] = client.status 
+        #res['status'] = client.status 
+        res['status'] = "success"
         res['username'] = client.username
         res['token'] = str(request.session['temptoken'])
         return HttpResponse(json.dumps(res), content_type='application/json')
