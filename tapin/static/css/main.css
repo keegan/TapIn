@@ -70,6 +70,14 @@ form {
     height: 100%;
 }
 
+input.pin {
+    height: 50px;
+    font-size: 2em;
+    width: 150px;
+    outline: none;
+    border: none;
+}
+
 #login-popup {
     position: absolute;
     top: 9em;

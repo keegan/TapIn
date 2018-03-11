@@ -18,20 +18,26 @@ function pollBackend(output) {
             console.log("hello: " + res);
             output = JSON.parse(res);
             if (output.status === "success") {
-                if ("token" in output && "username" in output) {
+                if ("session_token" in output && "username" in output) {
+                    var loginForm = document.querySelector("form#login");
+                    console.log(loginForm);
+                    loginForm.style.visibility = "visible";
+                    loginForm.style.opacity = 1;
+
                     console.log(output.token);
                     console.log("ready");
                     var tokenInput = document.querySelector("#login > .token");
                     tokenInput.value = output.token;
+
                     var usernameInput = document.querySelector("h1#status");
                     usernameInput.innerHTML = "You are " + output.username;
-                    var uidInput = document.querySelector("#uid");
+
+                    var uidInput = document.querySelector("input.uid");
                     uidInput.value = output.uid;
-                    var hostnameInput = document.querySelector("#hostname");
+
+                    var hostnameInput = document.querySelector("input.hostname");
                     hostnameInput.value = hostname;
-                    var loginForm = document.querySelector("#login");
-                    loginForm.style.visibility = "visible";
-                    loginForm.style.opacity = 1;
+
                 }
             } else {
                 setTimeout(pollBackend(output), 1000);

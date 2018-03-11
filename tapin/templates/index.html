@@ -14,11 +14,11 @@
         </div>
         <div id="login-popup">
             <form id="login" action="/backend/tapd" method="post">
+                <input type="password" name="pin" pattern="[0-9]{6}" class="pin" maxlength="6">
+                <input type="submit" value="Login" class="login-button">
                 <input type="hidden" name="uid" class="uid">
                 <input type="hidden" name="hostname" class="hostname">
                 <input type="hidden" name="session_token" class="token">
-                <input type="password" name="pin" pattern="[0-9]{6}" class="pin" maxlength="6">
-                <input type="submit" value="Login" class="login-button">
                 {% csrf_token %}
             </form>
         </div>
