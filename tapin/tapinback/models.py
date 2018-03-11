@@ -25,3 +25,5 @@ class Client(models.Model):
     hostname = models.CharField(max_length=30)
     status = models.CharField(default="nothing", max_length=20)
     username = models.CharField(default="", max_length=20)
+    def __init__(self, hostname):
+        self.hostname = hostname

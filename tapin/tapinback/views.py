@@ -12,8 +12,10 @@ def status(request):
         request.session.set_expiry(30)
         request.session['temptoken'] = str(secrets.token_urlsafe(64))
         res = {}
-        params = request.content_params
-        client = Client.objects.get(hostname=params['hostname'])
+        hostname = request.GET.get('hostname', None)
+        if hostname is None:
+            return HttpResponse(status=400)
+        client = Client.objects.get(hostname=hostname)
         if client.token != params['token']:
             return HttpResponse(status=401)
         res['status'] = client.status 
