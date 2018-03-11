@@ -1,13 +1,16 @@
 "use strict"
 
-const hostname = "pi3-curie";
 const url = new URL(window.location.href);
 const params = new URLSearchParams(url.search);
-const token = params.get('token')
+//if (params.has('token')) {
+const token = params.get('token');
+//} else {
+//    const token = null;
+//if (params.has('token')) {
+const hostname = params.get('hostname');
 
 function pollBackend(output) {
     var request = new XMLHttpRequest();
-    
     request.open("GET", "/backend/status?hostname=" + hostname + "&token=" + token, true);
     request.onreadystatechange = function (e) {
         if (request.readyState === 4 && request.status === 200) { 
@@ -24,6 +27,8 @@ function pollBackend(output) {
                     usernameInput.innerHTML = "You are " + output.username;
                     var uuidInput = document.querySelector("#uuid");
                     uuidInput.value = output.uuid;
+                    var hostnameInput = document.querySelector("#hostname");
+                    hostnameInput.value = hostname;
                     var loginForm = document.querySelector("#login");
                     loginForm.style.visibility = "visible";
                     loginForm.style.opacity = 1;
