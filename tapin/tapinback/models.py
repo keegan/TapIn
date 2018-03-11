@@ -27,3 +27,4 @@ class Client(models.Model):
     username = models.CharField(default="", max_length=20)
     def __init__(self, hostname):
         self.hostname = hostname
+        super().__init__()
