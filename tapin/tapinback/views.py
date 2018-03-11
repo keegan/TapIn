@@ -53,7 +53,7 @@ def pinauth(request):
         if pin is None:
             return HttpResponse(status=400)
         if user.pin != pin:
-            return HttpResponse(status=401)
+            return render(request, 'failure.html')
         hostname = request.POST.get('hostname', None)
         if hostname is None:
             return HttpResponse(status=400)

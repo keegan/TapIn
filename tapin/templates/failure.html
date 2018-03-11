@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <title>TapIn</title>
+    {% include 'head.html' %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div id="wrapper">
+        <div id="status-wrapper">
+            <h1 id="status">Failed, Wrong Pin.</h1>
+        </div>
+        <!--<a href="/">
+            <button class="login-button">Logout</button>
+        </a>-->
+    </div>
+</body>
+</html>
