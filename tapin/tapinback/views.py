@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Client, TapUser
 
@@ -8,6 +9,7 @@ import random
 import secrets
 import uuid
 import base64
+
 
 def status(request):
     if request.method == 'GET':
@@ -23,14 +25,14 @@ def status(request):
             return HttpResponse(status=400)
         if client.token != token:
             return HttpResponse(status=401)
-        #res['status'] = client.status 
-        res['status'] = "success" if random.random() < 0.1 else "in progress"
+        res['status'] = client.status
         res['username'] = client.username
         res['session_token'] = str(request.session['session_token'])
-        res['uid']= str(client.uid)
+        res['uid'] = str(client.uid)
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         return HttpResponse(status=400)
+
 
 def pinauth(request):
     if request.method == 'POST':
@@ -46,7 +48,7 @@ def pinauth(request):
             return HttpResponse(status=400)
         print(uid)
         print(uuid.UUID(uid))
-        user = TapUser.objects.get(id = uuid.UUID(uid))
+        user = TapUser.objects.get(id=uuid.UUID(uid))
         pin = request.POST.get('pin', None)
         if pin is None:
             return HttpResponse(status=400)
@@ -57,8 +59,10 @@ def pinauth(request):
             return HttpResponse(status=400)
         client = Client.objects.get(hostname=hostname)
         client.status = "nothing"
+        client.save()
         return render(request, "success.html")
 
+@csrf_exempt
 def tapd(request):
     if request.method == 'GET':
         hostname = request.GET.get('hostname', None)
@@ -70,20 +74,22 @@ def tapd(request):
             return HttpResponse(status=400)
         if client.token != token:
             return HttpResponse(status=401)
-        uid = response.GET.get('uid', None)
+        uid = request.GET.get('uid', None)
         if uid is None:
             return HttpResponse(status=400)
         user = TapUser.objects.get(id=uid)
         client.status = "in progress"
         client.username = user.userid.username
         client.uid = uid
-        token_bytes = base64.urlsafe_b64decode(client.token + ("=" * (-len(client.token)%4)))
-        key_bytes = base64.urlsafe_b64decode(client.keys + ("=" * (-len(client.keys)%4)))
-        token_segments = [token_bytes[(i-1)*48:i*48] for i in range(1, 15)]
-        token_keys = [key_bytes[(i-1)*6:i*6] for i in range(1, 15)]
-        segments = [{'key':token_keys[i], 'contents':token_segments[i]} for i in range(14)]
-        res = {'segments':segments}
-        return HttpResponder(json.dumps(res), content_type='application/json')    
+        token_bytes = base64.urlsafe_b64decode(user.token + ("=" * (-len(user.token) % 4)))
+        key_bytes = base64.urlsafe_b64decode(user.keys + ("=" * (-len(user.keys) % 4)))
+        token_segments = [base64.urlsafe_b64encode(token_bytes[(i - 1) * 48:i * 48]).decode("UTF-8").replace('=', '') for i in
+                          range(1, 15)]
+        token_keys = [base64.urlsafe_b64encode(key_bytes[(i - 1) * 6:i * 6]).decode("UTF-8").replace('=', '') for i in range(1, 15)]
+        segments = [{'key': token_keys[i], 'contents': token_segments[i]} for i in range(14)]
+        res = {'segments': segments}
+        client.save()
+        return HttpResponse(json.dumps(res), content_type='application/json')
     elif request.method == 'POST':
         hostname = request.POST.get('hostname', None)
         if hostname is None:
@@ -101,18 +107,20 @@ def tapd(request):
             client.status = "success"
         else:
             client.status = "failure"
+        client.save()
+        return HttpResponse(status=200)
     return HttpResponse(status=400)
 
-#from .forms import AuthForm
+# from .forms import AuthForm
 # Create your views here.
-#def formRequest(request): 
-	#if request.method == "POST":
-		#form = AuthForm(request.POST)
-		#if form.isValid():
-			#process data
-			#return to another url v
-			#return HTTPResponseDirect(insert url here)
-	#else:
-	#	form = AuthForm()
+# def formRequest(request):
+# if request.method == "POST":
+# form = AuthForm(request.POST)
+# if form.isValid():
+# process data
+# return to another url v
+# return HTTPResponseDirect(insert url here)
+# else:
+#	form = AuthForm()
 
-	#return render(request, "backui.html", {'form':form})
+# return render(request, "backui.html", {'form':form})

@@ -18,7 +18,7 @@ class TapUser(models.Model):
     keys = models.CharField(default=gen_keys, max_length=144)
     pin = models.CharField(max_length=6)
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    userid = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    userid = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
 
 class Client(models.Model):
     token = models.CharField(default=gen_client_token, max_length=96)
