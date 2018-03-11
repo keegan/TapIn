@@ -22,7 +22,7 @@ def status(request):
         if client.token != token:
             return HttpResponse(status=401)
         #res['status'] = client.status 
-        res['status'] = "success"
+        res['status'] = "success" if random.random() < 0.1 else "in progress"
         res['username'] = client.username
         res['session_token'] = str(request.session['session_token'])
         res['uid']= str(client.uid)
