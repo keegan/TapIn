@@ -25,6 +25,6 @@ class Client(models.Model):
     hostname = models.CharField(max_length=30)
     status = models.CharField(default="nothing", max_length=20)
     username = models.CharField(default="", max_length=20)
-    def __init__(self, hostname):
+    def __init__(self, hostname, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.hostname = hostname
-        super().__init__()

@@ -16,7 +16,10 @@ def status(request):
         if hostname is None:
             return HttpResponse(status=400)
         client = Client.objects.get(hostname=hostname)
-        if client.token != params['token']:
+        token = request.GET.get('token', None)
+        if token is None:
+            return HttpResponse(status=400)
+        if client.token != token:
             return HttpResponse(status=401)
         res['status'] = client.status 
         res['username'] = client.username
@@ -40,7 +43,10 @@ def tapd(request):
         if hostname is None:
             return HttpResponse(status=400)
         client = Client.objects.get(hostname=hostname)
-    return HttpResponse(status=500)
+        
+    elif request.method == 'POST':
+        return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
 #from .forms import AuthForm
 # Create your views here.
