@@ -19,6 +19,8 @@ def status(request):
         token = request.GET.get('token', None)
         if token is None:
             return HttpResponse(status=400)
+        print(token)
+        print(client.token)
         if client.token != token:
             return HttpResponse(status=401)
         res['status'] = client.status 
