@@ -70,14 +70,21 @@ form {
     height: 100%;
 }
 
+input.pin {
+    height: 50px;
+    font-size: 2em;
+    width: 150px;
+    outline: none;
+    border: none;
+}
+
 #login-popup {
     position: absolute;
-    z-index: 1;
     top: 9em;
     overflow-y: hidden;
     left: calc(25vw - 3em);
     width: 50vw;
-    height: 50vh;
+    padding: 3em;
     color: #000;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
