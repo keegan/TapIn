@@ -14,6 +14,8 @@ def status(request):
         res = {}
         params = request.content_params
         client = Client.objects.get(hostname=params['hostname'])
+        if client.token != params['token']:
+            return HttpResponse(status=401)
         res['status'] = client.status 
         res['username'] = client.username
         res['token'] = str(request.session['temptoken'])
@@ -31,6 +33,10 @@ def pinauth(request):
         user = TapUser.objects.get(id = params['user'])
 
 def tapd(request):
+    if request.method == 'GET':
+        params = request.content_params
+        client = Client.objects.get(hostname=params['hostname'])
+        
     return HttpResponse(status=500)
 
 #from .forms import AuthForm
