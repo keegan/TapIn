@@ -8,11 +8,11 @@ import secrets
 def status(request):
     if request.method == 'GET':
         request.session.set_expiry(30)
-        request.session['temptoken'] = secrets.token_bytes(128)
+        request.session['temptoken'] = str(secrets.token_bytes(128))
         res = {}
         res['status'] = 'in progress' if random.random() < 0.8 else 'success'
         res['username'] = '2018wzhang'
-        res['token'] = request.session['temptoken']
+        res['token'] = str(request.session['temptoken'])
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         return HttpResponse(status=400)

@@ -7,6 +7,7 @@ function pollBackend(output) {
     var res = request.responseText;
     console.log("hello: " + res);
     output = JSON.parse(res);
+    console.log(output.token);
 }
     
 
