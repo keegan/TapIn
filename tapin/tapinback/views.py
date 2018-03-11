@@ -10,7 +10,7 @@ import secrets
 def status(request):
     if request.method == 'GET':
         request.session.set_expiry(30)
-        request.session['temptoken'] = str(secrets.token_urlsafe(64))
+        request.session['session_token'] = str(secrets.token_urlsafe(64))
         res = {}
         hostname = request.GET.get('hostname', None)
         if hostname is None:
@@ -24,7 +24,7 @@ def status(request):
         #res['status'] = client.status 
         res['status'] = "success"
         res['username'] = client.username
-        res['token'] = str(request.session['session_token'])
+        res['session_token'] = str(request.session['session_token'])
         res['uid']= client.uid
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
