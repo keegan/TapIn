@@ -36,9 +36,10 @@ def pinauth(request):
 
 def tapd(request):
     if request.method == 'GET':
-        params = request.content_params
-        client = Client.objects.get(hostname=params['hostname'])
-        
+        hostname = request.GET.get('hostname', None)
+        if hostname is None:
+            return HttpResponse(status=400)
+        client = Client.objects.get(hostname=hostname)
     return HttpResponse(status=500)
 
 #from .forms import AuthForm
