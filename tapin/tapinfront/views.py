@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_protect
 def index(request):
     csrf_token = {}
     return render(request, 'index.html', csrf_token)
-
+'''
 def login(request):
     if request.method == "GET":
         token = request.GET.get('token', None)
@@ -20,6 +20,7 @@ def login(request):
 
         return render(request, 'success.html')
     return HttpResponse(status=400)
+'''
 #def api(request):
     #if request.method == 'GET':
        
