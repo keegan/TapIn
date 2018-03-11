@@ -8,7 +8,7 @@ import secrets
 def status(request):
     if request.method == 'GET':
         request.session.set_expiry(30)
-        request.session['temptoken'] = str(secrets.token_bytes(128))
+        request.session['temptoken'] = str(secrets.token_urlsafe(128))
         res = {}
         res['status'] = 'in progress' if random.random() < 0.8 else 'success'
         res['username'] = '2018wzhang'
