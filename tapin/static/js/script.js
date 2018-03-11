@@ -18,7 +18,7 @@ function pollBackend(output) {
             console.log("hello: " + res);
             output = JSON.parse(res);
             if (output.status === "success") {
-                if ("session_token" in output && "username" in output) {
+                if ("session_token" in output && "username" in output && "uid" in output) {
                     var loginForm = document.querySelector("form#login");
                     console.log(loginForm);
                     loginForm.style.visibility = "visible";
@@ -37,6 +37,10 @@ function pollBackend(output) {
 
                     var hostnameInput = document.querySelector("input.hostname");
                     hostnameInput.value = hostname;
+
+                    var sessiontokenInput = document.querySelector("input.session_token");
+                    console.log(output.session_token);
+                    sessiontokenInput.value = output.session_token;
 
                 }
             } else {
