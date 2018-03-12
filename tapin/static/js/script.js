@@ -19,11 +19,15 @@ function pollBackend(output) {
             output = JSON.parse(res);
             if (output.status === "success") {
                 if ("session_token" in output && "username" in output && "uid" in output) {
-                    var loginForm = document.querySelector("form#login");
+                    var loginForm = document.querySelector("#login-wrapper");
                     console.log(loginForm);
                     loginForm.style.visibility = "visible";
                     loginForm.style.opacity = 1;
 
+                    var submit = document.querySelector("form#login");
+                    
+                    submit.style.visibility = "visible";
+                    submit.style.opacity = 1;
 
                     var usernameInput = document.querySelector("h1#status");
                     usernameInput.innerHTML = "You are " + output.username;
@@ -41,7 +45,7 @@ function pollBackend(output) {
                 }
             } else if (output.status === "failure") {
                 console.error("Card failed.");
-                setTimeout(pollBackend(output), 1000);
+		location.reload()
             } else {
                 setTimeout(pollBackend(output), 1000);
             }
